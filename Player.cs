@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
     public float speed; 
     private Rigidbody2D rig;
     private Animator anim;
-    private bool IsJump;
+    private bool isJumping;
     private bool doubleJump;
     public float jumpForce;
     
@@ -18,10 +18,11 @@ public class Player : MonoBehaviour
         anim = GetComponent<Animator>();
     }
 
-    void Update()
+    void FixedUpdate()
     {
         Move();
         Jump();
+        Atack();
     }
 
     void Move()
@@ -30,36 +31,47 @@ public class Player : MonoBehaviour
 
         rig.velocity = new Vector2(movement * speed, rig.velocity.y);
 
-        if (Input.GetKey(KeyCode.Space))
-        {
-            anim.SetBool("IsAtack", true);
-        }
-
-        if (movement < 0)
-        {
-            anim.SetBool("IsRun", true);
-            transform.eulerAngles = new Vector3(0, 180, 0);
-        }
+ 
         if (movement > 0)
         {
- 
-            anim.SetBool("IsRun", true);
+            if (!isJumping)
+            {
+                anim.SetInteger("transition", 2);
+            }
+            transform.eulerAngles = new Vector3(0, 180, 0);
+        }
+        if (movement < 0)
+        {
+            if (!isJumping)
+            {
+                anim.SetInteger("transition", 2);
+            }
             transform.eulerAngles = new Vector3(0, 0, 0);
         }
- 
+
+        if(movement == 0 && !isJumping)
+        {
+            anim.SetInteger("transition", 0);
+        }
+
     }
     void Jump() 
     {
-        if (Input.GetButtonDown("Jump"){
-            if (!IsJump)
+        if (Input.GetButtonDown("Jump"))
+        {
+            anim.SetInteger("transition", 1);
+            if (!isJumping)
             {
+                anim.SetInteger("transition", 1);
                 rig.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
                 doubleJump = true;
+                isJumping = true;
             }
             else
             {
                 if(doubleJump)
                 {
+                    anim.SetInteger("transition", 1);
                     rig.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
                     doubleJump = false;
                 }
@@ -67,11 +79,24 @@ public class Player : MonoBehaviour
         }
     }
 
+    void Atack()
+    {
+        if (Input.GetKey(KeyCode.Q))
+        {
+            if (!isJumping)
+            {
+                anim.SetInteger("transition", 3);
+            }
+
+        }
+    }
+
     void OnCollisionEnter2D(Collision2D coll)
     {
         if(coll.gameObject.layer == 8) 
         {
-            IsJump = false;
+            isJumping = false;
         }
+
     }
 }
