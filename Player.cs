@@ -5,12 +5,12 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
 
-    public float speed; 
+    private float speed = 4;
     private Rigidbody2D rig;
     private Animator anim;
     private bool isJumping;
     private bool doubleJump;
-    public float jumpForce;
+    private float jumpForce = 4.3f;
     
     void Start()
     {
@@ -18,10 +18,14 @@ public class Player : MonoBehaviour
         anim = GetComponent<Animator>();
     }
 
+    void Update()
+    {
+        Jump();
+    }
+
     void FixedUpdate()
     {
         Move();
-        Jump();
         Atack();
     }
 
